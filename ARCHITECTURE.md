@@ -8,22 +8,22 @@ rrHog is optimized for **reliable ingestion** and **minimal ops**. The API **ack
 ```mermaid
 flowchart LR
   subgraph Client
-    B[Browser: rrweb]
+    B["Browser — rrweb"]
   end
   subgraph Edge
-    NG[Nginx (or Kong)]
+    NG["Nginx or Kong"]
   end
   subgraph App
-    A[FastAPI (ingest & read)]
-    Q[NATS JetStream]
-    W[Python Worker]
+    A["FastAPI (ingest & read)"]
+    Q["NATS JetStream"]
+    W["Python Worker"]
   end
   subgraph Data
-    CH[(ClickHouse)]
-    PG[(Postgres)]
+    CH["ClickHouse"]
+    PG["Postgres"]
   end
   subgraph UI
-    NX[Next.js UI]
+    NX["Next.js UI"]
   end
 
   B --> NG --> A
@@ -40,11 +40,11 @@ flowchart LR
 ```mermaid
 sequenceDiagram
   participant Browser
-  participant Edge as Nginx
-  participant API as FastAPI (ingest /i)
-  participant NATS as NATS JetStream
+  participant Edge
+  participant API
+  participant NATS
   participant Worker
-  participant CH as ClickHouse
+  participant CH
 
   Browser->>Edge: POST /i (batched rrweb)
   Edge->>API: proxy request
