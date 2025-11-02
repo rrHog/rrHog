@@ -5,24 +5,32 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Docs](https://img.shields.io/badge/docs-Architecture-brightgreen)](ARCHITECTURE.md)
-[![Good First Issues](https://img.shields.io/github/labels/YOUR_ORG/rrHog/good%20first%20issue)](#)
 
-**Why rrHog?** Most analytics pipelines lose data when DBs or networks hiccup. rrHog **ACKs fast** and persists to a **durable queue** first, so ingestion keeps flowing even if storage is down.
+## Quick start
+```bash
+docker compose up -d
+# Demo site:       http://localhost:3001
+# Analytics UI:    http://localhost:3000
+# API (healthz):   http://localhost:8000/healthz
+```
+
+**Default dev keys**
+- WRITE: `dev_write_123`
+- READ:  `dev_read_123`
+
+## Why rrHog?
+Most analytics pipelines lose data when DBs or networks hiccup. rrHog **ACKs fast** and persists to a **durable queue** first, so ingestion keeps flowing even if storage is down.
 
 ## Features
-- 🌀 **Async ingest** → instant `202` to clients
-- 🎥 **Session replay** with rrweb & rrweb-player
-- ⚡ **ClickHouse** analytics (blazing-fast queries)
-- 🧰 **Next.js** dashboard (App Router)
-- 🐳 **Docker Compose** one-box deploy
-- 🔒 Per-project keys, rate limits, and basic PII guards
+- 🌀 Async ingest (`202` immediately)
+- 🎥 rrweb session replay + rrweb-player UI
+- ⚡ ClickHouse analytics tables
+- 🧰 Next.js dashboard
+- 🐳 Docker Compose one-box
+- 🔒 Per-project keys + basic PII guards
 
-## Quick start (high level)
-1. `docker compose up -d` (services: nginx, nats, clickhouse, postgres, api, worker, web)
-2. Create a project → get **WRITE** and **READ** keys.
-3. Add rrweb snippet to your site and post batched segments to `/i`.
+See **[ARCHITECTURE.md](ARCHITECTURE.md)** for schemas and diagrams.
 
-See **[ARCHITECTURE.md](ARCHITECTURE.md)** for schemas, mermaid diagrams, and example API/worker snippets.
 
 ## Repo metadata (GitHub)
 - **Description:** `rrHog — Open-source, self-hosted web analytics & session replay built on rrweb. FastAPI + NATS JetStream + ClickHouse, Next.js UI.`

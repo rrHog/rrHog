@@ -1,11 +1,11 @@
 # Roadmap
 
 ## v0 (MVP)
-- [ ] Ingest `/i` (batch rrweb) → NATS → CH bulk insert
-- [ ] Playback API + rrweb-player UI
+- [x] Ingest `/i` (batch rrweb) → NATS → CH bulk insert
+- [x] Playback API + rrweb-player UI
+- [x] Docker Compose + seed script
 - [ ] Basic dashboards (pageviews, sessions, top pages)
 - [ ] Per-project keys, rate limits
-- [ ] Docker Compose + seed script
 
 ## v0.1–0.2
 - [ ] Error events (console/network) + rage clicks
