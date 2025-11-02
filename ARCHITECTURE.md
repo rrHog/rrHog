@@ -2,6 +2,7 @@
 
 rrHog is optimized for **reliable ingestion** and **minimal ops**. The API **acknowledges immediately**, then a worker asynchronously writes to storage.
 
+
 ## Diagram
 
 ```mermaid
@@ -10,10 +11,10 @@ flowchart LR
     B[Browser: rrweb]
   end
   subgraph Edge
-    Nginx[Nginx / (Kong optional)]
+    NG[Nginx (or Kong)]
   end
   subgraph App
-    A[FastAPI - ingest/read]
+    A[FastAPI (ingest & read)]
     Q[NATS JetStream]
     W[Python Worker]
   end
@@ -22,10 +23,10 @@ flowchart LR
     PG[(Postgres)]
   end
   subgraph UI
-    NX[Next.js]
+    NX[Next.js UI]
   end
 
-  B --> Nginx --> A
+  B --> NG --> A
   A --> Q
   W --> CH
   W --> PG
@@ -40,7 +41,7 @@ flowchart LR
 sequenceDiagram
   participant Browser
   participant Edge as Nginx
-  participant API as FastAPI /i
+  participant API as FastAPI (ingest /i)
   participant NATS as NATS JetStream
   participant Worker
   participant CH as ClickHouse
