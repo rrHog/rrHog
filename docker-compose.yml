@@ -91,7 +91,7 @@ services:
     build:
       context: ./apps/ui
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NEXT_PUBLIC_API_URL=http://api:8000
       - READ_KEY=dev_read_123
     depends_on:
       - api
@@ -101,7 +101,7 @@ services:
     build:
       context: ./apps/demo-site
     environment:
-      - NEXT_PUBLIC_RRHOG_INGEST=http://localhost:8000/i
+      - NEXT_PUBLIC_RRHOG_INGEST=http://api:8000/i
       - NEXT_PUBLIC_RRHOG_WRITE_KEY=dev_write_123
     depends_on:
       - api
