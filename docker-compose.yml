@@ -1,0 +1,115 @@
+version: "3.9"
+
+services:
+  nats:
+    image: nats:2.10-alpine
+    command: ["-js", "-sd", "/data"]
+    ports: ["4222:4222"]
+    volumes:
+      - nats-data:/data
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "4222"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  clickhouse:
+    image: clickhouse/clickhouse-server:23.8
+    environment:
+      - CLICKHOUSE_DB=default
+      - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
+    ports: ["8123:8123"]
+    volumes:
+      - ch-data:/var/lib/clickhouse
+      - ./db/clickhouse-init.sql:/docker-entrypoint-initdb.d/clickhouse-init.sql:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=rrhog
+      - POSTGRES_USER=rrhog
+      - POSTGRES_PASSWORD=rrhog
+    ports: ["5432:5432"]
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+      - ./db/postgres-init.sql:/docker-entrypoint-initdb.d/postgres-init.sql:ro
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "rrhog"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+
+  api:
+    build: ./services/api
+    environment:
+      - PORT=8000
+      - NATS_URL=nats://nats:4222
+      - NATS_STREAM=EVENTS
+      - NATS_SUBJECT=events.rrweb
+      - CH_URL=http://clickhouse:8123
+      - CH_DB=default
+      - PG_HOST=postgres
+      - PG_DB=rrhog
+      - PG_USER=rrhog
+      - PG_PASSWORD=rrhog
+      - DEFAULT_WRITE_KEY=dev_write_123
+      - DEFAULT_READ_KEY=dev_read_123
+      - CORS_ALLOW_ORIGINS=*
+    depends_on:
+      nats:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    ports: ["8000:8000"]
+
+  worker:
+    build: ./services/worker
+    environment:
+      - NATS_URL=nats://nats:4222
+      - NATS_STREAM=EVENTS
+      - NATS_SUBJECT=events.rrweb
+      - CH_URL=http://clickhouse:8123
+      - CH_DB=default
+      - PG_HOST=postgres
+      - PG_DB=rrhog
+      - PG_USER=rrhog
+      - PG_PASSWORD=rrhog
+    depends_on:
+      nats:
+        condition: service_healthy
+      clickhouse:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  web:
+    build:
+      context: ./apps/web
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - READ_KEY=dev_read_123
+    depends_on:
+      - api
+    ports: ["3000:3000"]
+
+  demo:
+    build:
+      context: ./apps/demo-site
+    environment:
+      - NEXT_PUBLIC_RRHOG_INGEST=http://localhost:8000/i
+      - NEXT_PUBLIC_RRHOG_WRITE_KEY=dev_write_123
+    depends_on:
+      - api
+    ports: ["3001:3001"]
+
+volumes:
+  ch-data:
+  pg-data:
+  nats-data:
