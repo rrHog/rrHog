@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
+import NextDynamic from "next/dynamic"; // <-- rename to avoid clashing with export below
 
 // Client-only player component (SSR-safe)
-const RRWebPlayer = dynamic(() => import("./player-client"), { ssr: false });
+const RRWebPlayer = NextDynamic(() => import("./player-client"));
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic"; // Next.js route config is still named 'dynamic'
 
 type ReplayData = { session_id: string; events: any[] };
 

@@ -9,8 +9,8 @@
 ## Quick start
 ```bash
 docker compose up -d
-# Demo site:       http://localhost:3001
-# Analytics UI:    http://localhost:3000
+# Demo site:       http://localhost:4001
+# Analytics UI:    http://localhost:4000
 # API (healthz):   http://localhost:8000/healthz
 ```
 

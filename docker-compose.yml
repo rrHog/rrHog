@@ -101,8 +101,8 @@ services:
     build:
       context: ./apps/demo-site
     environment:
-      - NEXT_PUBLIC_RRHOG_INGEST=http://api:8000/i
+      - NEXT_PUBLIC_RRHOG_INGEST=http://localhost:8000/i
       - NEXT_PUBLIC_RRHOG_WRITE_KEY=dev_write_123
     depends_on:
       - api
-    ports: ["4001:3001"]
+    ports: ["4001:3000"]
