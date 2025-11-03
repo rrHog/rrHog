@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
-import NextDynamic from "next/dynamic"; // <-- rename to avoid clashing with export below
+import NextDynamic from "next/dynamic";
 
-// Client-only player component (SSR-safe)
+// Client-only player component (no SSR)
 const RRWebPlayer = NextDynamic(() => import("./player-client"));
 
-export const dynamic = "force-dynamic"; // Next.js route config is still named 'dynamic'
+export const dynamic = "force-dynamic";
 
 type ReplayData = { session_id: string; events: any[] };
 
-export function generateMetadata({ params }: { params: { id: string } }): Metadata {
-  return {
-    title: `Session ${params.id} — rrHog`,
-  };
+export async function generateMetadata(
+  { params }: { params: Promise<{ id: string }> }
+): Promise<Metadata> {
+  const { id } = await params;
+  return { title: `Session ${id} — rrHog` };
 }
 
 async function getReplay(id: string): Promise<ReplayData> {
@@ -27,13 +28,16 @@ async function getReplay(id: string): Promise<ReplayData> {
   return res.json();
 }
 
-export default async function SessionPage({ params }: { params: { id: string } }) {
-  const data = await getReplay(params.id);
+export default async function SessionPage(
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+  const data = await getReplay(id);
 
   return (
     <div className="font-sans max-w-[1100px] mx-auto p-6 sm:p-10">
       <a href="/" className="underline">&larr; Back</a>
-      <h1 className="text-2xl font-semibold mt-3">Session: {params.id}</h1>
+      <h1 className="text-2xl font-semibold mt-3">Session: {id}</h1>
       <div className="mt-6">
         <RRWebPlayer events={data.events} />
       </div>
