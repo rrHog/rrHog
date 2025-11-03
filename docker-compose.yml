@@ -4,7 +4,7 @@ services:
     command: ["-js", "-sd", "/data"]
     ports: ["4222:4222"]
     volumes:
-      - nats-data:/data
+      - ./data/nats:/data
     healthcheck:
       test: ["CMD", "nc", "-z", "localhost", "4222"]
       interval: 5s
@@ -18,7 +18,7 @@ services:
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
     ports: ["8123:8123"]
     volumes:
-      - ch-data:/var/lib/clickhouse
+      - ./data/clickhouse:/var/lib/clickhouse
       - ./db/clickhouse-init.sql:/docker-entrypoint-initdb.d/clickhouse-init.sql:ro
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:8123/ping"]
@@ -34,7 +34,7 @@ services:
       - POSTGRES_PASSWORD=rrhog
     ports: ["5432:5432"]
     volumes:
-      - pg-data:/var/lib/postgresql/data
+      - ./data/postgres:/var/lib/postgresql/data
       - ./db/postgres-init.sql:/docker-entrypoint-initdb.d/postgres-init.sql:ro
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "rrhog"]
@@ -87,15 +87,15 @@ services:
       postgres:
         condition: service_healthy
 
-  web:
+  ui:
     build:
-      context: ./apps/web
+      context: ./apps/ui
     environment:
       - NEXT_PUBLIC_API_URL=http://localhost:8000
       - READ_KEY=dev_read_123
     depends_on:
       - api
-    ports: ["3000:3000"]
+    ports: ["4000:3000"]
 
   demo:
     build:
@@ -105,9 +105,4 @@ services:
       - NEXT_PUBLIC_RRHOG_WRITE_KEY=dev_write_123
     depends_on:
       - api
-    ports: ["3001:3001"]
-
-volumes:
-  ch-data:
-  pg-data:
-  nats-data:
+    ports: ["4001:3001"]

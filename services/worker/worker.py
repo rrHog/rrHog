@@ -2,7 +2,7 @@ import os, asyncio, orjson, json, uuid
 from datetime import datetime, timezone
 import clickhouse_connect
 import psycopg
-from nats.aio.client import Client as NATS
+import nats
 
 NATS_URL = os.getenv("NATS_URL", "nats://nats:4222")
 STREAM = os.getenv("NATS_STREAM", "EVENTS")
@@ -42,7 +42,7 @@ async def handle(msg, ch, pg_conn):
 
 
 async def main():
-    nc = await NATS.connect(NATS_URL)
+    nc = await nats.connect(NATS_URL)
     js = nc.jetstream()
     await ensure_stream(js)
 

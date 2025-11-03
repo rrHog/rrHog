@@ -1,5 +1,5 @@
 import asyncio, os, json
-from nats.aio.client import Client as NATS
+import nats
 from nats.js.client import JetStreamContext
 
 _nats = None
@@ -13,7 +13,7 @@ async def get_js():
     global _nats, _js
     if _js:
         return _js
-    _nats = await NATS.connect(URL)
+    _nats = await nats.connect(URL)
     _js = _nats.jetstream()
     # Ensure stream exists
     try:

@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS events_rrweb (
 ENGINE=MergeTree
 PARTITION BY toYYYYMM(ts)
 ORDER BY (project_id, session_id, ts, seq)
-TTL ts + INTERVAL 90 DAY;
+TTL toDateTime(ts) + INTERVAL 90 DAY;
 
 CREATE TABLE IF NOT EXISTS events (
   project_id UInt32,
