@@ -1,8 +1,6 @@
-version: "3.9"
-
 services:
   nats:
-    image: nats:2.10-alpine
+    image: nats:2.11-alpine
     command: ["-js", "-sd", "/data"]
     ports: ["4222:4222"]
     volumes:
@@ -14,7 +12,7 @@ services:
       retries: 20
 
   clickhouse:
-    image: clickhouse/clickhouse-server:23.8
+    image: clickhouse/clickhouse-server:25.3
     environment:
       - CLICKHOUSE_DB=default
       - CLICKHOUSE_DEFAULT_ACCESS_MANAGEMENT=1
@@ -29,7 +27,7 @@ services:
       retries: 30
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:17-alpine
     environment:
       - POSTGRES_DB=rrhog
       - POSTGRES_USER=rrhog
